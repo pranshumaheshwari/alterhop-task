@@ -31,17 +31,21 @@ class App extends Component {
     this.setState({
       username: event.target.value,
     });
+  }
+
+  componentDidMount() {
     let source = fromEvent($('#search-box'), 'keyup');
     let O = source.pipe(map(event => this.state.username))
-               .pipe(debounceTime(250))
+               .pipe(debounceTime(1500))
                .pipe(concatMap(username => from($.get(`${this.state.url}${username}`).catch(res => this.setState({ error: res.statusText, name: null })))))
                .subscribe(res => {
                  if(res){
-                  this.setState({
-                    name: res.name,
-                    href: res.html_url,
-                    src: res.avatar_url
-                  })
+                   console.log(res);
+                    this.setState({
+                      name: res.name,
+                      href: res.html_url,
+                      src: res.avatar_url
+                    });
                 }
                 });
   }
@@ -55,7 +59,6 @@ class App extends Component {
           <label htmlFor="search-box">Username:</label>
           <input id="search-box" type="text" className="form-control" onChange={ this.onChange } />
         </div>
-        <button id="search-button" className="btn btn-primary" onClick={ this.onClick }>Search</button>
         <br /><br /><br /><br />
         <div>
           { name ? <Result name={ name } href={href} src={src} /> : null }
